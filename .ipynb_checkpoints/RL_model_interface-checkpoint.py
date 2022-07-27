@@ -233,8 +233,7 @@ def simulation(bll, alpha, egs, imag, ans, nSims):
        ### Analyze generated data: LEARNING
             ##set 3 analysis
 
-    learn_dat = pd.DataFrame({'acc': rl.accuracy,  'idx': rl.stim_lineup.loc[:,'id']})
-    
+
 
 def execute_sim(n,fromI,toI, frac):
 
