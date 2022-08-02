@@ -21,6 +21,6 @@ This model is an adaptation of the RLWM LTM model. It simply checks memory whene
 
 #### To run the model:-
 
- Use  *RL_WPT_interface.py* to test the model. simply load the script by running e.g. `import LTM_wpt_interface as ltm`. 
+ Use  *LTM_WPT_interface.py* to test the model. simply load the script by running e.g. `import LTM_wpt_interface as ltm`. 
  The script contains a handy function for running a simulation which required 4 inputs,  `ltm.simmulation(bll, imag, ans, nSims)`, where `bll` is decay rate of declarative memory, `imag` is imaginal activation, `ans` is activation noise and `nSims` is the number of simulations you would like. 
  Data is saved to a `sim_data` variable which is a pandas DataFrame that contains the accuracy for each of the card combinations (of which there are 14, see Li et al. 2016). The `test_wpt_interface.ipynb` Jupyter notebook might be a nice place to play with the models. 
