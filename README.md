@@ -2,7 +2,7 @@
 
 ## These are a series of models that learn the weather prediction task. 
 
-The weather prediction task in these models are based on the Li et al. 2016 paper -  *Paired associate and Feedback-Based Weather Prediction Tasks Support Multiple Category learning Systems*.
+The weather prediction task in these models are based on the Li et al. 2016 paper -  *Paired associate and Feedback-Based Weather Prediction Tasks Support Multiple Category learning Systems* (the paper is in the main folder of this repo).
 
 ---
 
