@@ -8,7 +8,7 @@ The weather prediction task in these models are based on the Li et al. 2016 pape
 
 This model contains productions for all card presentations, including single card, 2-card and 3-card presentations. The probabilities are learned by individual productions for each combination of those card presentations. 
 
-#### TO run the model
+#### To run the model:-
 
  Use  *RL_WPT_interface.py* to test the model. simply load the script by running e.g. `import RL_wpt_interface as rl`. 
  The script contains a handy function for running a simulation which required 3 inputs,  `rl.simmulation(alpha, egs, nSims)`, where `alpha` is RL learning rate, `egs` is RL noise, and `nSims` is the number of simulations you would like. 
@@ -19,7 +19,7 @@ This model contains productions for all card presentations, including single car
 
 This model is an adaptation of the RLWM LTM model. It simply checks memory whenever a stimulus is presented. If the current stimulus and a response isn't found in declarative memory it responds
 
-#### TO run the model
+#### To run the model:-
 
  Use  *RL_WPT_interface.py* to test the model. simply load the script by running e.g. `import LTM_wpt_interface as ltm`. 
  The script contains a handy function for running a simulation which required 4 inputs,  `ltm.simmulation(bll, imag, ans, nSims)`, where `bll` is decay rate of declarative memory, `imag` is imaginal activation, `ans` is activation noise and `nSims` is the number of simulations you would like. 
