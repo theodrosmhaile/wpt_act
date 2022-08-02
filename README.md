@@ -3,6 +3,7 @@
 ## These are a series of models that learn the weather prediction task. 
 
 The weather prediction task in these models are based on the Li et al. 2016 paper -  *Paired associate and Feedback-Based Weather Prediction Tasks Support Multiple Category learning Systems*.
+---
 
 ### RL-Only model: RL_model_wpt.lisp
 
@@ -14,7 +15,8 @@ This model contains productions for all card presentations, including single car
  The script contains a handy function for running a simulation which required 3 inputs,  `rl.simmulation(alpha, egs, nSims)`, where `alpha` is RL learning rate, `egs` is RL noise, and `nSims` is the number of simulations you would like. 
  Data is saved to a `sim_data` variable which is a pandas DataFrame that contains the accuracy for each of the card combinations (of which there are 14, see Li et al. 2016). The `test_wpt_interface.ipynb` Jupyter notebook might be a nice place to play with the models. 
  
- 
+--- 
+
 ### LTM-Only model : LTM_model_wpt.lisp 
 
 This model is an adaptation of the RLWM LTM model. It simply checks memory whenever a stimulus is presented. If the current stimulus and a response isn't found in declarative memory it responds
