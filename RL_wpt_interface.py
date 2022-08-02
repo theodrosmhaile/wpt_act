@@ -16,7 +16,7 @@ from matplotlib import pyplot
 import itertools
 
 
-show_output = True
+show_output = False
 
 #Load model
 curr_dir = os.path.dirname(os.path.realpath(__file__))
@@ -33,7 +33,7 @@ def present_stim():
     if i < nTrials:
         stim_temp = np.sort(np.array([stim_names.loc[stim_lineup.loc[i,'id'] - 1].dropna(how='all')])).flatten()
         stim = np.append(stim_temp, ['nil', 'nil'])
-        
+
 
         chunks = actr.define_chunks(['isa', 'stimulus', 'card1', stim[0], 'card2', stim[1], 'card3', stim[2]])
         #actr.define_chunks(['isa', 'stimulus', 'card1', stims1[1]], ['isa', 'stimulus', 'card2', stims1[0]])
@@ -146,8 +146,6 @@ stim_names = pd.DataFrame({1:['square','square','square','square','square','squa
                             'triangle',np.nan, 'triangle']}
                                         )
 
-#CODE TO CALL TRIAL SPECIFIC STIMULI DATA FROM LINE UP. THIS NEEDS TO BE PERFORMED AT EVENT OF STIMULUS PRESENTATION
-stim_names.loc[stim_lineup.loc[1,'id']-1].dropna(how='all')
 
 #variables needed
 
@@ -194,19 +192,19 @@ def simulation( alpha, egs, nSims):
     global i
     global sim_data
     global accuracy
- 
-   
-  
+
+
+
     nsimulations = np.arange(nSims) #set the number of simulations "subjects"
     for n in nsimulations:
         print("sim ", n)
         actr.reset()
         #actr.hide_output()
 
-       
+
         actr.set_parameter_value(":alpha", alpha)
         actr.set_parameter_value(":egs", egs)
-        
+
         i = 0
         win = None
         print(i)
