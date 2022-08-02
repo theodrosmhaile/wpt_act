@@ -20,7 +20,7 @@ This model contains productions for all card presentations, including single car
 
 ### LTM-Only model : LTM_model_wpt.lisp 
 
-This model is an adaptation of the RLWM LTM model. It simply checks memory whenever a stimulus is presented. If the current stimulus and a response isn't found in declarative memory it responds
+This model is an adaptation of the RLWM LTM model. It simply checks memory whenever a stimulus is presented. If the current stimulus and a response isn't found in declarative memory it responds randomly. Once it starts learning, it will successfully retrieve responses act on them. There are three "check memory" productions designated S1,S2 and S3. Simply, S1 fires when only 1 card is shown, S2 for two cards and S3 for three cards. This was the easiest way to make the model work but there might be other better ways...
 
 #### To run the model:-
 
