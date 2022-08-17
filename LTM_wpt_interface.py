@@ -216,7 +216,7 @@ def simulation(bll, imag, ans, nSims):
        
        ### Analyze generated data: LEARNING
             
-        learn_temp = pd.DataFrame({'acc': accuracy, 'index': stim_lineup.loc[:,'id']})
+        learn_temp = pd.DataFrame({'acc': accuracy, 'index': stim_lineup.loc[:,'id'], 'bll': bll,'imag': imag, 'ans': ans})
         sim_data = sim_data.append(learn_temp)
     
 
@@ -224,18 +224,10 @@ def simulation(bll, imag, ans, nSims):
 
        
 def execute_sim(n,fromI,toI, frac):
-
+    global sim_data
     for i in range(fromI, toI):
 
         simulation(param_combs[i][0], param_combs[i][1], param_combs[i][2], n)
       
-    sim = pd.DataFrame(sim_data, columns=['set3_learn','set6_learn', 'set3_test', 'set6_test','bll', 'alpha', 'egs', 'imag', 'ans' ])
-    sim_st = pd.DataFrame(sim_std, columns=['set3_learn','set6_learn', 'set3_test', 'set6_test'])
-    sim_st.to_JSON('./simulated_data/LTM_model/LTM_sim_std_date.JSON',orient='table')
-    sim.to_pickle('./simulated_data/LTM_model/LTM_sim_data_' + 'frac_' +np.str(frac) +'_'+ np.str(fromI) + '_to_' + np.str(toI))  
+    sim_data.to_csv('./simulated_data/LTM_model/LTM_wpt_sim_data_' + 'frac_' +np.str(frac) +'_'+ np.str(fromI) + '_to_' + np.str(toI))
 
-
-
-
-
-        

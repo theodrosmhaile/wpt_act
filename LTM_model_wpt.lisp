@@ -31,7 +31,7 @@
      ;;:ans nil
      ;; :rt  0.5  ;; Not needed
      :er  t
-     :v t
+     :v nil
      :esc t
      :mas 8.0
      ;:visual-activation 5.0 
@@ -137,6 +137,7 @@
        
    +retrieval> 
       card1 =cur_pic1 
+       card2 =cur_pic2
     
       outcome yes
    

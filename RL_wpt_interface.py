@@ -20,7 +20,7 @@ show_output = False
 
 #Load model
 curr_dir = os.path.dirname(os.path.realpath(__file__))
-actr.load_act_r_model(os.path.join(curr_dir, "RL_model_wpt.lisp"))
+actr.load_act_r_model(os.path.join(curr_dir, "RL_model_wpt_alternate.lisp"))
 
 ## Daisy chained python functions to present stimuli, get response and  present feedback
 
@@ -213,14 +213,14 @@ def simulation( alpha, egs, nSims):
 
        ### Analyze generated data: LEARNING
 
-        learn_temp = pd.DataFrame({'acc': accuracy,  'idx': stim_lineup.loc[:,'id']})
+        learn_temp = pd.DataFrame({'acc': accuracy,  'idx': stim_lineup.loc[:,'id'], 'alpha': alpha,'egs': egs})
         sim_data = sim_data.append(learn_temp)
 
 def execute_sim(n,fromI,toI, frac):
-
+    global sim_data
     for i in range(fromI, toI):
 
         simulation( param_combs[i][0],param_combs[i][1], n)
 
-    sim = pd.DataFrame(sim_data, columns=['accuracy','stim_index', 'alpha', 'egs' ])
-    sim.to_csv('./simulated_data/RL_model/RL_wpt_sim_data_' + 'frac_' +np.str(frac) +'_'+ np.str(fromI) + '_to_' + np.str(toI))
+   
+    sim_data.to_csv('./simulated_data/RL_model/RL_wpt_sim_data_' + 'frac_' +np.str(frac) +'_'+ np.str(fromI) + '_to_' + np.str(toI))

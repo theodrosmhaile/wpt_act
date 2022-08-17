@@ -1,0 +1,278 @@
+---
+title: "WPT_analysis"
+author: "Theodros H."
+date: "08/2022"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+knitr::opts_chunk$set(
+  comment = "#>", echo = FALSE, warning = FALSE, 
+  message = FALSE )
+ 
+```
+
+Import Data
+
+```{R import}
+library(matlab)
+library(tidyverse)
+library(ggpubr)
+library(gauntlet)
+
+
+wpt.dat <- read_csv('./behavioral_data/wpt_data_uclimb_subjectpool.txt')
+```
+
+```{r accuracy by cue group:behavioral}
+behav_hist=wpt.dat %>% 
+  group_by(pattern, pat_prblty) %>% 
+  summarise(acc = mean(accuracy),
+            n = length(accuracy),
+            se = sd(accuracy)/sqrt(n)) %>% 
+  ggplot(aes(x=as.factor(pattern), y=acc, group=pattern)) +
+  geom_bar(stat = 'identity', width = .5)+
+  geom_errorbar(aes(ymax=acc+se, ymin=acc-se), size=1, width=.4)+
+  #geom_boxplot(outlier.colour = 'red' ) +
+  #geom_jitter(alpha=.3, size=3, width = .2)+
+  geom_text(aes(label=pat_prblty,angle=45), check_overlap = T,size=6, nudge_x = .01, nudge_y = .1)+
+theme_pubclean(base_size = 18) +
+  ylim(c(0,1))+
+  ggtitle('Human data')
+  
+
+# correlation with frequency
+pat_freq = tibble('frequency' = c(19,9,26,9,12,6,19,19,6,12,9,26,9,19), 
+                      pattern = c(1:14))
+
+
+grouped.wpt.dat <- 
+  wpt.dat %>% 
+  inner_join(pat_freq, by='pattern') %>% 
+
+  group_by(pattern, pat_prblty, frequency) %>% 
+  summarise(acc = mean(accuracy),
+            n = length(accuracy),
+            se = sd(accuracy)/sqrt(n))  
+
+
+  
+behav_frequency=grouped.wpt.dat %>% 
+  ggplot(aes(acc,frequency))+
+  geom_point(size=6, alpha=.4) +
+  #geom_errorbarh(aes(xmax=acc+se, xmin=acc-se), height =.3, size=1)+
+  geom_smooth(method = 'lm', color='red')+
+   ylab('pattern frequency')+
+  xlab('accuracy')+
+  geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
+  theme_pubclean(base_size = 18) +
+  ggtitle('Human data')
+
+behav_probability <- grouped.wpt.dat %>% 
+  ggplot(aes(acc,pat_prblty))+
+  geom_point(size=6, alpha=.4) +
+ # geom_errorbarh(aes(xmax=acc+se, xmin=acc-se), height =.3, size=1)+
+ # geom_smooth(method = 'lm', color='red')+
+ # xlim(c(0.25,.9))+
+  #geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
+  ylab('pattern SUN probability')+
+  xlab('accuracy')+
+  theme_pubclean(base_size = 18) +
+  ggtitle('Human data')
+
+```
+
+```{r epoch analysis}
+# epochs = tibble(bins = c(1:10), 
+#                 e.start =c(1,11,21,31,41,51,61,71,81,91), 
+#                 e.end = c(1,11,21,31,41,51,61,71,81,91)+9) 
+# wpt.dat %>% 
+#   mutate(trial_index = rep(c(1:200), 51)) %>% 
+#   mutate()
+#   
+#   
+#   dplyr::group_by(trial_index) %>% 
+#   summarize(acc=mean(accuracy)) %>% 
+#   ggplot(aes(x=trial_index, y=acc)) +
+#   geom_bar(stat = 'identity')
+# 
+# # 
+# interval_left_join(
+#     epochs, 
+#     wpt.dat,
+#     by = c('trial_index' = 'e.start', 'tria_index' = 'e.end'))
+
+```
+
+```{r RL model data analysis}
+RL.sim.dat <- read_csv('./simulated_data/RL_model/RL_wpt_sim_data_frac_822022_0_to_25.csv')
+
+ RL.sim.dat %<>% 
+  mutate(pattern=idx, .keep='unused',
+         trial_index = ...1) %>% 
+  inner_join(pat_freq, by='pattern') %>% 
+  inner_join(wpt.dat %>% 
+               filter(subject==6200) %>% 
+               select(pat_prblty, pattern) %>% 
+               unique(),
+             by='pattern') 
+
+RL_hist <- RL.sim.dat %>%  
+  filter(egs==0.1, alpha==0.25) %>% 
+  dplyr::group_by(pattern, frequency, pat_prblty) %>% 
+  summarise(accuracy= mean(acc), 
+            n = length(acc)) %>% 
+   ggplot(aes(x=as.factor(pattern), y=accuracy, group=pattern)) +
+  geom_bar(stat = 'identity', width = .5)+
+  #geom_boxplot(outlier.colour = 'red' ) +
+  #geom_jitter(alpha=.3, size=3, width = .2)+
+  geom_text(aes(label=frequency,angle=45), check_overlap = T,size=6, nudge_x = .01, nudge_y = .1)+
+theme_pubclean(base_size = 18)+
+  ylim(c(0,1))+
+  ggtitle('RL data')
+  
+grouped.RL.sim <- 
+  RL.sim.dat %>%  
+  filter(egs==0.1,
+         alpha==0.25) %>% 
+  dplyr::group_by(pattern,frequency, pat_prblty) %>% 
+  summarise(accuracy= mean(acc), 
+            n = length(acc)) 
+  
+RL_frequency <- grouped.RL.sim %>% 
+ggplot(aes(accuracy,frequency))+
+  geom_point(size=6, alpha=.4) +
+  #geom_errorbarh(aes(xmax=acc+se, xmin=acc-se), height =.3, size=1)+
+  geom_smooth(method = 'lm', color='red')+
+   ylab('pattern frequency')+
+  xlab('accuracy')+
+  geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
+  theme_pubclean(base_size = 18) +
+  ggtitle('RL data')
+
+RL_probability <- grouped.RL.sim %>% 
+  ggplot(aes(accuracy,pat_prblty))+
+  geom_point(size=6, alpha=.4) +
+ # geom_errorbarh(aes(xmax=acc+se, xmin=acc-se), height =.3, size=1)+
+  #geom_smooth(method = 'lm', color='red')+
+ # xlim(c(0.25,.9))+
+  #geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
+  ylab('pattern SUN probability')+
+  xlab('accuracy')+
+  theme_pubclean(base_size = 18) +
+  ggtitle('RL data')
+  
+
+```
+
+```{r LTM model data analysis}
+LTM.sim.dat <- read_csv('./simulated_data/LTM_model/partial.csv')
+
+LTM.sim.dat %<>% 
+  mutate(pattern=index, .keep='unused',
+         trial_index = ...1) %>% 
+  inner_join(pat_freq, by='pattern') %>% 
+  inner_join(wpt.dat %>% 
+               filter(subject==6200) %>% 
+               select(pat_prblty, pattern) %>% 
+               unique(),
+             by='pattern')
+
+LTM_hist=LTM.sim.dat %>%  
+  filter(bll==0.3, imag==0.5, ans==0.1) %>% 
+  dplyr::group_by(pattern, frequency, pat_prblty) %>% 
+  summarise(accuracy= mean(acc), 
+            n = length(acc)) %>% 
+   ggplot(aes(x=as.factor(pattern), y=accuracy, group=pattern)) +
+  geom_bar(stat = 'identity', width = .5)+
+  #geom_boxplot(outlier.colour = 'red' ) +
+  #geom_jitter(alpha=.3, size=3, width = .2)+
+theme_pubclean(base_size = 18) +
+  ylim(c(0,1))+
+  ggtitle('LTM data')
+  
+grouped.LTM.sim <- 
+  LTM.sim.dat %>%  
+  filter(bll==0.3, imag==0.5, ans==0.1) %>% 
+  dplyr::group_by(pattern,frequency, pat_prblty) %>% 
+  summarise(accuracy= mean(acc), 
+            n = length(acc)) 
+  
+LTM_frequency=grouped.LTM.sim %>% 
+ggplot(aes(accuracy,frequency))+
+  geom_point(size=6, alpha=.4) +
+  #geom_errorbarh(aes(xmax=acc+se, xmin=acc-se), height =.3, size=1)+
+  geom_smooth(method = 'lm', color='red')+
+   ylab('pattern frequency')+
+  xlab('accuracy')+
+  geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
+  theme_pubclean(base_size = 18) +
+  ggtitle('LTM data')
+
+LTM_probability=grouped.LTM.sim %>% 
+  ggplot(aes(accuracy,pat_prblty))+
+  geom_point(size=6, alpha=.4) +
+ # geom_errorbarh(aes(xmax=acc+se, xmin=acc-se), height =.3, size=1)+
+  #geom_smooth(method = 'lm', color='red')+
+ # xlim(c(0.25,.9))+
+  #geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
+  ylab('pattern SUN probability')+
+  xlab('accuracy')+
+  theme_pubclean(base_size = 18) +
+  ggtitle('LTM data')
+  
+```
+
+```{r binned analysis}
+RL_bins = RL.sim.dat %>% 
+   filter(egs==0.1, alpha==0.25) %>% 
+  mutate(bins = cut(trial_index, seq(0, 200, 20))) %>% 
+  mutate(gbin = floor_divide(trial_index, 20)) %>% 
+  dplyr::group_by(gbin, alpha,egs) %>% 
+  dplyr::summarize(accuracy= mean(acc)) %>% 
+  ggplot(aes(x=as.factor(gbin), y=accuracy, group=egs)) +
+ geom_point()+
+  geom_line()+
+  theme_pubclean(base_size = 18) +
+    xlab('binned learning trials') +
+    ggtitle('RL data')
+
+LTM_bins = LTM.sim.dat %>% 
+  filter(bll==0.3, imag==0.5, ans==0.1) %>% 
+  mutate(bins = cut(trial_index, seq(0, 200, 20))) %>% 
+  mutate(gbin = floor_divide(trial_index, 20)) %>% 
+  dplyr::group_by(gbin,bll) %>% 
+  dplyr::summarize(accuracy= mean(acc)) %>% 
+  ggplot(aes(x=as.factor(gbin), y=accuracy, group=bll)) +
+ geom_point()+
+  geom_line()+
+  theme_pubclean(base_size = 18) +
+    xlab('binned learning trials') +
+    ggtitle('LTM data')
+
+human_bins=wpt.dat %>% 
+  dplyr::mutate(trial_index=rep(c(1:200),length(unique(wpt.dat$subject)))) %>% 
+   mutate(gbin = floor_divide(trial_index, 20)) %>% 
+  dplyr::group_by(gbin) %>% 
+  dplyr::summarize(acc= mean(accuracy), 
+                      n = length(accuracy),
+            se = sd(accuracy)/sqrt(n)) %>% 
+  ggplot(aes(x=as.factor(gbin), y=acc)) +
+ geom_point()+
+  geom_path()+
+  geom_errorbar(aes(ymin=acc-se,ymax=acc+se),width=.25, size=.75, width=.25, size=.75)+  
+  theme_pubclean(base_size = 18) +
+    xlab('binned learning trials') +
+    ggtitle('Human data')
+
+```
+
+```{r two mods + subs, fig.width=16}
+
+ggarrange(behav_hist, RL_hist, LTM_hist, nrow = 1, label.x = 'Pattern')
+ggarrange(behav_frequency, RL_frequency, LTM_frequency, nrow = 1)
+ggarrange(behav_probability, RL_probability, LTM_probability, nrow = 1)
+ggarrange(human_bins, RL_bins, LTM_bins, nrow = 1)
+
+```

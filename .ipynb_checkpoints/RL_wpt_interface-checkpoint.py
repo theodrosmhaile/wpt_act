@@ -16,11 +16,11 @@ from matplotlib import pyplot
 import itertools
 
 
-show_output = True
+show_output = False
 
 #Load model
 curr_dir = os.path.dirname(os.path.realpath(__file__))
-actr.load_act_r_model(os.path.join(curr_dir, "RL_model_wpt.lisp"))
+actr.load_act_r_model(os.path.join(curr_dir, "RL_model_wpt_alternate.lisp"))
 
 ## Daisy chained python functions to present stimuli, get response and  present feedback
 
@@ -33,7 +33,7 @@ def present_stim():
     if i < nTrials:
         stim_temp = np.sort(np.array([stim_names.loc[stim_lineup.loc[i,'id'] - 1].dropna(how='all')])).flatten()
         stim = np.append(stim_temp, ['nil', 'nil'])
-        
+
 
         chunks = actr.define_chunks(['isa', 'stimulus', 'card1', stim[0], 'card2', stim[1], 'card3', stim[2]])
         #actr.define_chunks(['isa', 'stimulus', 'card1', stims1[1]], ['isa', 'stimulus', 'card2', stims1[0]])
@@ -146,8 +146,6 @@ stim_names = pd.DataFrame({1:['square','square','square','square','square','squa
                             'triangle',np.nan, 'triangle']}
                                         )
 
-#CODE TO CALL TRIAL SPECIFIC STIMULI DATA FROM LINE UP. THIS NEEDS TO BE PERFORMED AT EVENT OF STIMULUS PRESENTATION
-stim_names.loc[stim_lineup.loc[1,'id']-1].dropna(how='all')
 
 #variables needed
 
@@ -162,15 +160,8 @@ cor_resps = np.where(stim_lineup['sun']==1, 's','r') # assign s for 'sun' and r 
 
 
 #parameter ranges for simulation
-bll_param   = [0.3, 0.4, 0.5, 0.6, 0.7]   # decay rate of declarative memory,range around .5 actr rec val
 alpha_param = [0.05, 0.1, 0.15, 0.2, 0.25] # learning rate of the RL utility selection 0.2 rec val
 egs_param   = [0.1, 0.2, 0.3, 0.4, 0.5] # amount of noise added to the RL utility selection
-imag_param  = [0.1, 0.2, 0.3 , 0.4, 0.5] #simulates working memory as attentional focus
-ans_param   = [0.1, 0.2, 0.3, 0.4, 0.5] #parameter for noise in dec. memory activation. Range recommended by ACTR manual.
-# [0.4, 0.5, 0.6]#
-# [0.1, 0.15, 0.2]#
-# [0.2, 0.3, 0.4]#
-# [0.2, 0.3, 0.4]#
 
 #Integrated model params
 
@@ -201,19 +192,19 @@ def simulation( alpha, egs, nSims):
     global i
     global sim_data
     global accuracy
- 
-   
-  
+
+
+
     nsimulations = np.arange(nSims) #set the number of simulations "subjects"
     for n in nsimulations:
         print("sim ", n)
         actr.reset()
         #actr.hide_output()
 
-       
+
         actr.set_parameter_value(":alpha", alpha)
         actr.set_parameter_value(":egs", egs)
-        
+
         i = 0
         win = None
         print(i)
@@ -222,14 +213,14 @@ def simulation( alpha, egs, nSims):
 
        ### Analyze generated data: LEARNING
 
-        learn_temp = pd.DataFrame({'acc': accuracy,  'idx': stim_lineup.loc[:,'id']})
+        learn_temp = pd.DataFrame({'acc': accuracy,  'idx': stim_lineup.loc[:,'id'], 'alpha': alpha,'egs': egs})
         sim_data = sim_data.append(learn_temp)
 
 def execute_sim(n,fromI,toI, frac):
-
+    global sim_data
     for i in range(fromI, toI):
 
         simulation( param_combs[i][0],param_combs[i][1], n)
 
-    sim = pd.DataFrame(sim_data, columns=['accuracy','stim_index', 'alpha', 'egs' ])
-    sim.to_csv('./simulated_data/RL_model/RL_wpt_sim_data_' + 'frac_' +np.str(frac) +'_'+ np.str(fromI) + '_to_' + np.str(toI))
+   
+    sim_data.to_csv('./simulated_data/RL_model/RL_wpt_sim_data_' + 'frac_' +np.str(frac) +'_'+ np.str(fromI) + '_to_' + np.str(toI))

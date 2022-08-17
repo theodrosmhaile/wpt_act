@@ -1,0 +1,47 @@
+---
+title: "Forward motion"
+subtitle: "Individual differences in learning and meta-learning strategies" 
+author: "TheT3ddie"
+format: 
+  revealjs:
+    theme: simple
+editor: visual
+---
+
+## Contents
+
+1.  Map of goals and hypotheses
+2.  Results so far
+3.  Moving forward
+4.  {uncharted territory}
+
+## *limited* Map of hypotheses:
+
+### Individual differences in learning performance are driven by:
+
+1.  **Individual cognition:** E.g., WM, LTM decay-rate, noise
+2.  **Individual meta-learning strategy:** E.g., assessment of recent success or failure
+3.  **Individual prior or subordinate knowledge**
+4.  **Task quality:** difficulty, novelty and complexity
+
+## Questions
+
+Simply, individual cognitive qualities interact with task requirements producing differential learning outcomes.
+
+
+1.  Are cognitive qualities stable in a learner?
+2.  What is the compounding effect of meta-learning strategies?
+3.  How might prior-knowledge affect which learning strategy is used?
+
+## Learning Task 1: RLWM Task
+
+### We have shown that:
+
+-   Even a simple task can be learned through multiple memory strategies.
+-   For the RLWM task, a declarative LTM strategy seems to be best-suited.
+-   Memory strategy use is affected by cognitive qualities that we can estimate.
+-   Some learning outcomes are explained by meta-learning "choices".
+
+```{r}
+1 + 1
+```
