@@ -149,6 +149,7 @@ ggplot(aes(accuracy,frequency))+
   xlab('accuracy')+
   geom_text(aes(label=pat_prblty), check_overlap = T,size=6, nudge_x = .01)+
   theme_pubclean(base_size = 18) +
+  xlim(c(0,1))+
   ggtitle('RL data')
 
 RL_probability <- grouped.RL.sim %>% 

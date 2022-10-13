@@ -42,6 +42,3 @@ Simply, individual cognitive qualities interact with task requirements producing
 -   Memory strategy use is affected by cognitive qualities that we can estimate.
 -   Some learning outcomes are explained by meta-learning "choices".
 
-```{r}
-1 + 1
-```
